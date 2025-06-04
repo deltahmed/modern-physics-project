@@ -14,8 +14,8 @@
     <img alt="Forks" src="https://img.shields.io/github/forks/deltahmed/modern-physics-project.svg?style=for-the-badge"></a>
   <a href="https://github.com/deltahmed/modern-physics-project">
     <img alt="Stars" src="https://img.shields.io/github/stars/deltahmed/modern-physics-project.svg?style=for-the-badge"></a>
-  <a href="https://raw.githubusercontent.com/deltahmed/modern-physics-project/master/LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /> </a>
+  <a href="https://github.com/deltahmed/modern-physics-project?tab=License-1-ov-file">
+    <img src="https://img.shields.io/badge/License-BSD2-blue?style=for-the-badge" alt="License" /> </a>
 </p>
 
 
