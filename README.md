@@ -50,7 +50,7 @@
 Installe les dépendances avec :
 
 ```sh
-pip install customtkinter matplotlib pillow numpy
+pip3 install customtkinter matplotlib pillow numpy scipy
 ```
 
 ### Fichiers nécessaires
@@ -65,7 +65,7 @@ pip install customtkinter matplotlib pillow numpy
 Lance simplement l’application :
 
 ```sh
-python VisualisationPaquet.pyw
+python3 VisualisationPaquet.pyw
 ```
 
 ### Étapes principales
