@@ -34,6 +34,7 @@
   - Étalement du paquet (σ)
   - Position initiale (x₀)
 - Animation de la densité de probabilité et du potentiel
+- Visualisation des états stationnaires 
 - Barre d’outils Matplotlib personnalisée (zoom, déplacement, sauvegarde…)
 - Sauvegarde automatique des préférences utilisateur
 - Gestion des erreurs et valeurs par défaut robustes
