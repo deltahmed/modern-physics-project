@@ -64,21 +64,6 @@ def selection(master,Titre: str,values: list, default: str):
     frame.pack()
     return select #on retourne la boite de selection pour pouvoir la manipuler plus tard
 
-def choosecolors(master,Titre:str, command: Callable): 
-    """prend un titre une fenètre et une commande en paramètre et affiche un bouton pour choisir la couleur"""
-    try: 
-        frame = ctk.CTkFrame(master, fg_color="transparent") #creation d'une nouvelle frame
-        text_var = tk.StringVar(value=Titre)
-        label = ctk.CTkLabel(master=frame,textvariable=text_var,font=('Arial', 18)) # création du texte 
-        label.pack(padx=5,pady=5,side= tk.LEFT) 
-        img = Image.open('images\colorw.png')  # on ouvre l'icone
-        photo_image = ctk.CTkImage(light_image=img,dark_image=img,size=(15,15)) 
-        b = ctk.CTkButton(master=frame, command=command,text='', image=photo_image, width=16) #on crée un boutton avec cette icone
-        b.pack(side= tk.LEFT) 
-        frame.pack() #on affiche le tout
-    except : # si le programme echoue renvoyer une erreur
-        messagebox.showerror('Erreur',"Le programme a rencontrée un problème dans l'affichage des boutons")
-
 def checkbox(master,Titre:str, command, on, off, defaultvar):
     """prend un titre une fenètre et une commande, une valeur quand la case est coché et une autre quand elle ne l'est pas ainsi qu'une
     valeur par defaut en paramètre et afficheune case a cocher"""
@@ -111,14 +96,14 @@ def toolbarmatplotlib(canvas,master) -> BarreOutils:
     imglist = []
     if ctk.get_appearance_mode() == 'Dark' : #on défini les images a afficher et la couleur du fond en fonction de thème de l'application 
         color = '#2B2B2B'
-        imgfileliste = ["images\\home.png","images\\gauche.png","images\\droite.png","images\\nav.png","images\\zoom.png","images\\save.png"]
+        imgfileliste = ["images/home.png","images/gauche.png","images/droite.png","images/nav.png","images/zoom.png","images/save.png"]
     if ctk.get_appearance_mode() == 'Light' :
         color = '#DBDBDB'
-        imgfileliste = ["images\\bhome.png","images\\bgauche.png","images\\bdroite.png","images\\bnav.png","images\\bzoom.png","images\\bsave.png"]
+        imgfileliste = ["images/bhome.png","images/bgauche.png","images/bdroite.png","images/bnav.png","images/bzoom.png","images/bsave.png"]
     try : 
         for files in imgfileliste : #pour chaque images on creer des objet de type Tkimages
             img = Image.open(files)
-            if files in ["images\\bgauche.png","images\\bdroite.png","images\\gauche.png","images\\droite.png"] :
+            if files in ["images/bgauche.png","images/bdroite.png","images/gauche.png","images/droite.png"] :
                 img = img.resize((24,24), Image.Resampling.LANCZOS)
             imgphoto = ImageTk.PhotoImage(img)
             imglist.append(imgphoto)
@@ -133,7 +118,7 @@ def toolbarmatplotlib(canvas,master) -> BarreOutils:
             else :
                 w.config(background=color,relief=tk.FLAT) #sinon pour les autres element on défini la couleur de fond ainsi que le relief (pour les labels)
     except: # si le code echoue envoyer une erreur et lancer le programme quand meme avec des valeurs par default
-        messagebox.showerror('Erreur Fichiers', 'Les fichier du programme on été modifiés, demarage sans graphiques')
+        messagebox.showwarning('Erreur graphique', 'Erreur graphique : Démarage graphique simplifiée')
         toolbar = BarreOutils(canvas, master, pack_toolbar=False)
         toolbar.config(background=color)
     toolbar.update() 
