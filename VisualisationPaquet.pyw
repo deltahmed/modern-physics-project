@@ -13,6 +13,8 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
+from scipy.sparse import diags
+from scipy.linalg import eigh
 from typing import List,Union
 from AffichageGraphique import *
 
@@ -258,9 +260,7 @@ class LabyTK(ctk.CTkFrame):
 
     def generer(self, Profondeurv0, RapportEv0, Etalementpaquetsigma, InitialPosexc):
 
-        import numpy as np
-        import math
-        import matplotlib.animation as animation
+        
 
         self.menu = False
         self.buttuns = multiple_button(self, 1, ['Menu principal'], [self.menuprincipal])
@@ -282,9 +282,6 @@ class LabyTK(ctk.CTkFrame):
         except:
             InitialPosexc = 0.6
 
-        
-
-
         # Paramètres physiques et numériques
         dt = 1E-7
         dx = 0.001
@@ -296,9 +293,6 @@ class LabyTK(ctk.CTkFrame):
         xc = InitialPosexc
         sigma = Etalementpaquetsigma
         A = 1 / np.sqrt(np.sqrt(np.pi) * sigma)
-
-        
-        
 
         v0 = Profondeurv0
         e = RapportEv0
@@ -331,15 +325,29 @@ class LabyTK(ctk.CTkFrame):
                 it += 1
                 final_densite[it][:] = densite[i][:]
 
-        x_trans = o > 0.9  # région après le puits
+        x_trans = o > 0.9
         densite_finale = final_densite[-1, :]
         T_E = np.sum(densite_finale[x_trans]) / np.sum(densite[0, :])
 
-        # Création de la figure et de l'animation
-        text(self, f"V0={v0} eV, E={E} eV, Position initiale: {xc} m, Etalement du paquet: {sigma} m, T = {T_E:.4f}")
+    
+        text(self, f"V0={v0} eV, E={E} eV, Position initiale: {xc} m, Etalement du paquet: {sigma} m, T = {T_E:.4f}, R={(1-T_E):.4f}")
+
+
+        container = tk.Frame(self)
+        container.pack(expand=True, fill=tk.BOTH)
+
+        left_frame = tk.Frame(container)
+        right_frame = tk.Frame(container)
+        left_frame.grid(row=0, column=0, sticky="nsew")
+        right_frame.grid(row=0, column=1, sticky="nsew")
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+        container.rowconfigure(0, weight=1)
+
+        # ANIMATION DU PAQUET D'ONDE 
         fig1 = Figure()
         ax1 = fig1.add_subplot()
-        
+
         if ctk.get_appearance_mode() == "Light":
             fig1.set_facecolor('#DBDBDB')
             text_color = "black"
@@ -365,20 +373,53 @@ class LabyTK(ctk.CTkFrame):
             line.set_data(o, final_densite[j, :])
             return line,
 
-        canvas1 = FigureCanvasTkAgg(figure=fig1, master=self)
+        canvas1 = FigureCanvasTkAgg(figure=fig1, master=left_frame)
         canvas1.draw()
-        toolbar1 = toolbarmatplotlib(canvas1, self)
+        toolbar1 = toolbarmatplotlib(canvas1, left_frame)
         canvas1.get_tk_widget().pack(expand=True, fill=tk.BOTH)
         toolbar1.pack(fill=tk.X)
 
-        # Animation matplotlib dans tkinter
         self.ani = animation.FuncAnimation(
             fig1, animate, init_func=init, frames=n_frame, blit=False, interval=100, repeat=False
         )
-        self.parent.changeframe(self.parent.framelaby)
-        
-        
 
+        # ÉTATS STATIONNAIRES
+        main_diag = 2.0 / dx**2 + V
+        off_diag = -1.0 / dx**2 * np.ones(nx - 1)
+        H = diags([main_diag, off_diag, off_diag], [0, -1, 1]).toarray()
+
+        num_states = 3
+        energies, wavefuncs = eigh(H)
+
+        fig2 = Figure(figsize=(6, 4))
+        ax2 = fig2.add_subplot()
+
+        if ctk.get_appearance_mode() == "Light":
+            fig2.set_facecolor('#DBDBDB')
+        else:
+            fig2.set_facecolor('#2B2B2B')
+
+        ax2.set_title("États stationnaires et potentiel", color=text_color)
+        ax2.set_xlabel("x", color=text_color)
+        ax2.set_ylabel("Fonction d'onde", color=text_color)
+        ax2.tick_params(axis='x', colors=text_color)
+        ax2.tick_params(axis='y', colors=text_color)
+
+        for n in range(num_states):
+            psi_n = wavefuncs[:, n]
+            norm_psi = psi_n / np.sqrt(np.trapz(np.abs(psi_n)**2, o))
+            ax2.plot(o, norm_psi + energies[n], label=f'n={n}, E={energies[n]:.2f} eV')
+
+        ax2.plot(o, V, label="Potentiel", color='black', linestyle='dashed')
+        ax2.legend(loc='upper right')
+
+        canvas2 = FigureCanvasTkAgg(fig2, master=right_frame)
+        canvas2.draw()
+        toolbar2 = toolbarmatplotlib(canvas2, right_frame)
+        canvas2.get_tk_widget().pack(expand=True, fill=tk.BOTH)
+        toolbar2.pack(fill=tk.X)
+
+        self.parent.changeframe(self.parent.framelaby)
 
 
 
